@@ -9,8 +9,8 @@ class App extends Component {
         this.state = {
             members: [],
             teams: [],
-            prList: {},
             memberPrList: {},
+            teamPrList: {},
             prLinks: [],
             prLinksVisible: false
         };
@@ -30,6 +30,7 @@ class App extends Component {
         let prList = {};
 
         if (!members[0].fetch) {
+            console.log('adasd');
             members.forEach(member => {
                 fetch('https://github.deere.com/api/v3/search/issues?q=state%3Aopen+author%3A' + member.login + '+type%3Apr&access_token=' + this.accessToken)
                     .then(response => {
@@ -43,7 +44,6 @@ class App extends Component {
                                 newList = prList[repoName];
                             }
                             newList.push({
-                                repoUrl: item.repository_url,
                                 pullRequestUrl: item.html_url,
                                 title: item.title,
                                 id: item.id,
@@ -55,21 +55,22 @@ class App extends Component {
                     }
                     const prLinks = Object.keys(prList).map(() => true);
                     this.setState({
-                        prList,
                         memberPrList: prList,
+                        teamPrList: prList,
                         prLinks
                     });
                 });
             });
         } else {
             let user, temp = {};
-            user = Object.keys(this.state.memberPrList).map(key => this.state.memberPrList[key].filter(data => members[0].login === data.createdby));
+            user = Object.keys(this.state.teamPrList).map(key => this.state.teamPrList[key].filter(data => members[0].login === data.createdby));
+            user.sort((a,b)=>a.length>b.length);
 
-            Object.keys(this.state.memberPrList).forEach((key, i) => user[i].length ? temp = Object.assign({[key]: user[i]}, temp) : '');
+            Object.keys(this.state.teamPrList).forEach((key, i) => user[i].length ? temp = Object.assign({[key]: user[i]}, temp) : '');
 
 
             this.setState({
-                prList: temp
+                memberPrList: temp
             });
         }
     }
@@ -99,7 +100,7 @@ class App extends Component {
     filterBasedOnMember = (event) => {
         this.fetchMemberData([{
             login: event.target.value,
-            fetch: false
+            fetch: true
         }])
     };
 
@@ -151,18 +152,16 @@ class App extends Component {
                     </div>
                 </aside>
                 <section>
-                    {Object.keys(this.state.prList)
+                    {Object.keys(this.state.memberPrList)
                         .map((key, iterator) => {
-                            console.log(this.state.prList);
                             return (
                                 <div key={iterator}>
                                     <h2 onClick={() => this.showPRLinks(iterator)}>
-                                        {key} ({this.state.prList[key].length})
+                                        {key} ({this.state.memberPrList[key].length})
                                     </h2>
                                     {this.state.prLinks[iterator] && (
                                         <div className='pr-links'>
-                                            {this.state.prList[key].map((pr, i) => {
-                                                // console.log(pr);
+                                            {this.state.memberPrList[key].map((pr, i) => {
                                                 return (
                                                     <a className='links'
                                                        href={pr.pullRequestUrl}
