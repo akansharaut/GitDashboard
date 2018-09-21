@@ -25,6 +25,18 @@ class App extends Component {
             this.setState({teams});
         });
     }
+    getKeyValueList = (user) => {
+        let temp = {};
+        user.forEach((prList) => {
+            let repoName;
+            if(prList.length) {
+                repoName = prList[0].repoUrl.split("/").splice(-1)[0];
+                temp = Object.assign({[repoName]: prList}, temp)
+            }
+        });
+
+        return temp;
+    };
 
     fetchMemberData(members) {
         let prList = {};
@@ -43,16 +55,23 @@ class App extends Component {
                                 newList = prList[repoName];
                             }
                             newList.push({
-                                pullRequestUrl: item.html_url,
-                                title: item.title,
-                                id: item.id,
+                                createdby: item.user.login,
                                 createdDate: item.created_at,
-                                createdby: item.user.login
+                                id: item.id,
+                                pullRequestUrl: item.html_url,
+                                repoUrl: item.repository_url,
+                                title: item.title
                             });
                             prList[repoName] = newList;
                         });
                     }
+
+                    let prListArray = Object.keys(prList).map((list) => prList[list]);
+                    prListArray.sort((a,b)=>a.length>b.length);
+
                     const prLinks = Object.keys(prList).map(() => true);
+
+                    prList = this.getKeyValueList(prListArray);
                     this.setState({
                         memberPrList: prList,
                         teamPrList: prList,
@@ -60,16 +79,20 @@ class App extends Component {
                     });
                 });
             });
-        } else {
+        } else if(members[0].login !== 'select team member') {
             let user, temp = {};
             user = Object.keys(this.state.teamPrList).map(key => this.state.teamPrList[key].filter(data => members[0].login === data.createdby));
             user.sort((a,b)=>a.length>b.length);
 
-            Object.keys(this.state.teamPrList).forEach((key, i) => user[i].length ? temp = Object.assign({[key]: user[i]}, temp) : '');
+            temp = this.getKeyValueList(user);
 
 
             this.setState({
                 memberPrList: temp
+            });
+        } else {
+            this.setState({
+                memberPrList: this.state.teamPrList
             });
         }
     }
