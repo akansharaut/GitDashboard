@@ -29,7 +29,7 @@ class App extends Component {
     fetchMemberData(members) {
         let prList = {};
 
-        if(!members[0].fetch) {
+        if (!members[0].fetch) {
             members.forEach(member => {
                 fetch('https://github.deere.com/api/v3/search/issues?q=state%3Aopen+author%3A' + member.login + '+type%3Apr&access_token=' + this.accessToken)
                     .then(response => {
@@ -65,7 +65,7 @@ class App extends Component {
             let user, temp = {};
             user = Object.keys(this.state.memberPrList).map(key => this.state.memberPrList[key].filter(data => members[0].login === data.createdby));
 
-            Object.keys(this.state.memberPrList).forEach((key, i) => user[i].length ? temp = Object.assign({[key]: user[i]}, temp) : '' );
+            Object.keys(this.state.memberPrList).forEach((key, i) => user[i].length ? temp = Object.assign({[key]: user[i]}, temp) : '');
 
 
             this.setState({
@@ -84,7 +84,7 @@ class App extends Component {
         });
     }
 
-    showPRLinks = (iterator)  => {
+    showPRLinks = (iterator) => {
         let linkVisibilityChange = this.state.prLinks;
         linkVisibilityChange[iterator] = !linkVisibilityChange[iterator];
 
@@ -93,7 +93,7 @@ class App extends Component {
 
     fullDateTime = (dateValue) => {
         let d = new Date(dateValue);
-        return d.toLocaleString([], { hour12: true});
+        return d.toLocaleString([], {hour12: true});
     };
 
     filterBasedOnMember = (event) => {
@@ -119,7 +119,7 @@ class App extends Component {
                 <aside>
                     <div className='org'>
                         <h2>Organization</h2>
-                        <select>
+                        <select disabled>
                             <option value='myjohndeere'>MyJohnDeere</option>
                         </select>
                     </div>
@@ -127,54 +127,61 @@ class App extends Component {
                         <h2>Teams</h2>
                         <select onChange={this.filterBasedOnTeam}>
                             <option>select team</option>
-                            {this.state.teams && this.state.teams.map((team, i) => {
-                                return (
-                                    <option value={team.id} id={team.id} key={i}>{team.name}</option>
-                                );
-                            })}
+                            {this.state.teams && this.state.teams
+                                .sort((left, right) => left.name.localeCompare(right.name))
+                                .map((team, i) => {
+                                    return (
+                                        <option value={team.id} id={team.id} key={i}>{team.name}</option>
+                                    );
+                                })}
                         </select>
                     </div>
                     <div className='members'>
                         <h2>Members</h2>
                         <select onChange={this.filterBasedOnMember}>
                             <option>select team member</option>
-                            {this.state.members && this.state.members.map((member, i) => {
-                                return (
-                                    <option value={member.login} id={member.id} key={i}>{member.login}</option>
-                                );
-                            })}
+                            {this.state.members && this.state.members
+                                .sort((left, right) => left.login.localeCompare(right.login))
+                                .map((member, i) => {
+                                    return (
+                                        <option value={member.login} id={member.id} key={i}>{member.login}</option>
+                                    );
+                                })}
                         </select>
                     </div>
                 </aside>
                 <section>
-                    {Object.keys(this.state.prList).map((key, iterator) => {
-                        return (
-                            <div key={iterator}>
-                                <h2 onClick={()=> this.showPRLinks(iterator)}>
-                                    {key} ({this.state.prList[key].length})
-                                </h2>
-                                {this.state.prLinks[iterator] && (
-                                    <div className='pr-links'>
-                                        {this.state.prList[key].map((pr, i) => {
-                                            // console.log(pr);
-                                            return (
-                                                <a className='links'
-                                                   href={pr.pullRequestUrl}
-                                                   target='_blank' key={i}>
+                    {Object.keys(this.state.prList)
+                        .map((key, iterator) => {
+                            console.log(this.state.prList);
+                            return (
+                                <div key={iterator}>
+                                    <h2 onClick={() => this.showPRLinks(iterator)}>
+                                        {key} ({this.state.prList[key].length})
+                                    </h2>
+                                    {this.state.prLinks[iterator] && (
+                                        <div className='pr-links'>
+                                            {this.state.prList[key].map((pr, i) => {
+                                                // console.log(pr);
+                                                return (
+                                                    <a className='links'
+                                                       href={pr.pullRequestUrl}
+                                                       target='_blank' key={i}>
                                                     <span className='pr-link'>
                                                         {pr.title}
                                                     </span>
-                                                    <div className='pr-author'>
-                                                        created by <span>{pr.createdby}</span> on <span>{this.fullDateTime(pr.createdDate)}</span>
-                                                    </div>
-                                                </a>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
+                                                        <div className='pr-author'>
+                                                            created
+                                                            by <span>{pr.createdby}</span> on <span>{this.fullDateTime(pr.createdDate)}</span>
+                                                        </div>
+                                                    </a>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                 </section>
             </div>
         );
