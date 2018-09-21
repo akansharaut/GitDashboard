@@ -30,7 +30,6 @@ class App extends Component {
         let prList = {};
 
         if (!members[0].fetch) {
-            console.log('adasd');
             members.forEach(member => {
                 fetch('https://github.deere.com/api/v3/search/issues?q=state%3Aopen+author%3A' + member.login + '+type%3Apr&access_token=' + this.accessToken)
                     .then(response => {
@@ -93,27 +92,15 @@ class App extends Component {
     };
 
     fullDateTime = (dateValue) => {
-        let d = new Date(dateValue);
-        let dd = new Date(Date.now());
-        console.log("date",d.getDate());
-        console.log("date now",dd.getDate());
-        if(d.getDate() === dd.getDate()){
+        let prCreatedDate = new Date(dateValue);
+        let todayDate = new Date(Date.now());
+        if(prCreatedDate.getDate() === todayDate.getDate()){
             return 'today';
-        }else if(dd.getDate() - d.getDate() < 28){
-            return dd.getDate() - d.getDate() + ' days ago';
+        }else if(todayDate.getDate() - prCreatedDate.getDate() < 28){
+            return todayDate.getDate() - prCreatedDate.getDate() + ' days ago';
         } else {
-            return d.toLocaleString([], {hour12: true})
+            return prCreatedDate.toLocaleString([], {hour12: true})
         }
-        /*if(d.getDate() === dd.getDate()){
-            return 'today';
-        }else if(d.getDate() === dd.getDate()-1){
-            return 'a day ago';
-        }else if(d.getDate() === dd.getDate()-2){
-            return 'two day ago';
-        }else {
-            return d.toLocaleString([], {hour12: true})
-        }*/
-        //return d.getDate() === dd.getDate()? 'today': d.toLocaleString([], {hour12: true});
     };
 
     filterBasedOnMember = (event) => {
