@@ -10,10 +10,11 @@ class App extends Component {
             members: [],
             teams: [],
             prList: {},
+            memberPrList: {},
             prLinks: [],
             prLinksVisible: false
         };
-        this.handleTeamChange = this.handleTeamChange.bind(this);
+        this.filterBasedOnTeam = this.filterBasedOnTeam.bind(this);
     }
 
     componentWillMount() {
@@ -28,40 +29,52 @@ class App extends Component {
     fetchMemberData(members) {
         let prList = {};
 
-        members.forEach(member => {
-            fetch('https://github.deere.com/api/v3/search/issues?q=state%3Aopen+author%3A' + member.login + '+type%3Apr&access_token=' + this.accessToken)
-                .then(response => {
-                    return response.json();
-                }).then(pr => {
-                if (pr.total_count > 0) {
-                    pr.items.forEach((item) => {
-                        let repoName = item.repository_url.split("/").splice(-1)[0];
-                        let newList = [];
-                        if (prList[repoName]) {
-                            newList = prList[repoName];
-                        }
-                        newList.push({
-                            repoUrl: item.repository_url,
-                            pullRequestUrl: item.html_url,
-                            title: item.title,
-                            id: item.id,
-                            createdDate: item.created_at,
-                            createdby: item.user.login
+        if(!members[0].fetch) {
+            members.forEach(member => {
+                fetch('https://github.deere.com/api/v3/search/issues?q=state%3Aopen+author%3A' + member.login + '+type%3Apr&access_token=' + this.accessToken)
+                    .then(response => {
+                        return response.json();
+                    }).then(pr => {
+                    if (pr.total_count > 0) {
+                        pr.items.forEach((item) => {
+                            let repoName = item.repository_url.split("/").splice(-1)[0];
+                            let newList = [];
+                            if (prList[repoName]) {
+                                newList = prList[repoName];
+                            }
+                            newList.push({
+                                repoUrl: item.repository_url,
+                                pullRequestUrl: item.html_url,
+                                title: item.title,
+                                id: item.id,
+                                createdDate: item.created_at,
+                                createdby: item.user.login
+                            });
+                            prList[repoName] = newList;
                         });
-                        prList[repoName] = newList;
+                    }
+                    const prLinks = Object.keys(prList).map(() => true);
+                    this.setState({
+                        prList,
+                        memberPrList: prList,
+                        prLinks
                     });
-                }
-                const prLinks = Object.keys(prList).map(() => true);
-                //console.log('Links', prLinks);
-                this.setState({
-                    prList,
-                    prLinks
                 });
             });
-        });
+        } else {
+            let user, temp = {};
+            user = Object.keys(this.state.memberPrList).map(key => this.state.memberPrList[key].filter(data => members[0].login === data.createdby));
+
+            Object.keys(this.state.memberPrList).forEach((key, i) => user[i].length ? temp = Object.assign({[key]: user[i]}, temp) : '' );
+
+
+            this.setState({
+                prList: temp
+            });
+        }
     }
 
-    handleTeamChange(event) {
+    filterBasedOnTeam(event) {
         fetch('https://github.deere.com/api/v3/teams/' + event.target.value + '/members?access_token=' + this.accessToken)
             .then(response => {
                 return response.json();
@@ -78,10 +91,17 @@ class App extends Component {
         this.setState({prLinks: linkVisibilityChange});
     };
 
-    fullDateTime(dateValue) {
-        var d = new Date(dateValue);          
-        return d.toLocaleString([], { hour12: true});    
-    }
+    fullDateTime = (dateValue) => {
+        let d = new Date(dateValue);
+        return d.toLocaleString([], { hour12: true});
+    };
+
+    filterBasedOnMember = (event) => {
+        this.fetchMemberData([{
+            login: event.target.value,
+            fetch: false
+        }])
+    };
 
     render() {
         return (
@@ -105,7 +125,7 @@ class App extends Component {
                     </div>
                     <div className='teams'>
                         <h2>Teams</h2>
-                        <select onChange={this.handleTeamChange}>
+                        <select onChange={this.filterBasedOnTeam}>
                             <option>select team</option>
                             {this.state.teams && this.state.teams.map((team, i) => {
                                 return (
@@ -114,13 +134,13 @@ class App extends Component {
                             })}
                         </select>
                     </div>
-                     <div className='members'>
+                    <div className='members'>
                         <h2>Members</h2>
-                        <select>
+                        <select onChange={this.filterBasedOnMember}>
                             <option>select team member</option>
                             {this.state.members && this.state.members.map((member, i) => {
                                 return (
-                                    <option value={member.id} id={member.id} key={i}>{member.login}</option>
+                                    <option value={member.login} id={member.id} key={i}>{member.login}</option>
                                 );
                             })}
                         </select>
@@ -136,7 +156,7 @@ class App extends Component {
                                 {this.state.prLinks[iterator] && (
                                     <div className='pr-links'>
                                         {this.state.prList[key].map((pr, i) => {
-                                          console.log(pr);
+                                            // console.log(pr);
                                             return (
                                                 <a className='links'
                                                    href={pr.pullRequestUrl}
@@ -145,7 +165,7 @@ class App extends Component {
                                                         {pr.title}
                                                     </span>
                                                     <div className='pr-author'>
-                                                      created by <span>{pr.createdby}</span> on {this.fullDateTime(pr.createdDate)}
+                                                        created by <span>{pr.createdby}</span> on <span>{this.fullDateTime(pr.createdDate)}</span>
                                                     </div>
                                                 </a>
                                             );
