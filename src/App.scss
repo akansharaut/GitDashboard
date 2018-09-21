@@ -1,0 +1,195 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Calibri, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  color: #FFF;
+}
+
+.App {
+  .App-header {
+    .color-bars {
+      display: block;
+      position: relative;
+
+      .primary {
+        background: linear-gradient(to left, #13542a 0, #2a803b 25%, #2a803b 75%, #13542a 100%);
+        filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FF13542A', endColorstr='#FF13542A', GradientType=1);
+        height: 9px;
+      }
+
+      .secondary {
+        background: linear-gradient(to left, #fab62d 0, #edd655 25%, #edd655 75%, #fab62d 100%);
+        filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FFFAB62D', endColorstr='#FFFAB62D', GradientType=1);
+        height: 3px;
+      }
+
+      .action-link {
+        background: #fcf8e3;
+        border: 0;
+        color: #367c2b;
+        font-size: 85%;
+        font-weight: bold;
+        left: 50%;
+        padding: 2px 20px 6px;
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        z-index: 1;
+
+        &::before,
+        &::after {
+          border: 20px solid transparent;
+          border-bottom-color: #fcf8e3;
+          content: '';
+          position: absolute;
+          top: -100%;
+        }
+
+        &::before {
+          left: -8px;
+          transform: rotate(70deg);
+        }
+
+        &::after {
+          right: -8px;
+          transform: rotate(-70deg);
+        }
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .header-bar {
+      background-color: #70b570;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .logo {
+        background-image: url('deere-logo.png');
+        width: 199px;
+        height: 38px;
+        background-repeat: no-repeat;
+        padding-left: 30px;
+      }
+      h1 {
+        padding: 0 20px 0 0;
+        margin: 0;
+        color: #fff;
+        text-transform: uppercase;
+      }
+    }
+  }
+  aside {
+    background-color: #3a3a3e;
+    width: 250px;
+    position: absolute;
+    bottom: 0;
+    top: 70px;
+    .org, .teams, .members {
+      padding: 15px;
+      h2 {
+        padding-bottom: 20px;
+      }
+      /* select, option {
+        width: 100%;
+        padding-left: 29px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        height: 34px;
+        font-weight: bold;
+        border-radius: 10px;
+        -webkit-appearance: none;
+        background-color: #777777;
+        color: #fff;
+      } */
+      select:not([multiple]){
+        -webkit-appearance:none;
+        -moz-appearance:none;
+        background-position:right 50%;
+        background-repeat:no-repeat;
+        background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDZFNDEwNjlGNzFEMTFFMkJEQ0VDRTM1N0RCMzMyMkIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDZFNDEwNkFGNzFEMTFFMkJEQ0VDRTM1N0RCMzMyMkIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0NkU0MTA2N0Y3MUQxMUUyQkRDRUNFMzU3REIzMzIyQiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0NkU0MTA2OEY3MUQxMUUyQkRDRUNFMzU3REIzMzIyQiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuGsgwQAAAA5SURBVHjaYvz//z8DOYCJgUxAf42MQIzTk0D/M+KzkRGPoQSdykiKJrBGpOhgJFYTWNEIiEeAAAMAzNENEOH+do8AAAAASUVORK5CYII=);
+        padding: .5em;
+        background-color: #777777;
+        border-radius: 10px;
+        padding-right:1.5em;
+        color: #fff;
+        border-radius: 5px;
+        font-size: 13px;
+        width: 222px;
+        height: 30px;
+        text-transform: capitalize;
+        border: none;
+      }
+    }
+  }
+
+  section {
+    background-color: #e2dbdb;
+    position: absolute;
+    top: 70px;
+    left: 250px;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    >div{
+      margin: 10px;
+      width: 30%;
+      flex-grow: 1;
+      background: #FFF;
+      border-radius: 10px;
+    }
+    h2 {
+      color: #fff;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 10px;
+      background-color: #70b570;
+      border-radius:10px 10px 0 0;
+      word-break: break-all;
+    }
+    .pr-links {
+      background-color: #ffffff;
+      border-radius: 10px;
+      .links {
+        display: block;
+        color: #46453d;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        border-top: 1px solid #ccc;
+        padding: 10px;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        span {
+
+        }
+        .pr-author{
+          padding-top: 8px;
+          font-size: 10px;
+          color:#777d82;
+          font-style: italic;
+        }
+      }
+      a:visited {
+        color: #46453d;
+      }
+    }
+  }
+}
+
