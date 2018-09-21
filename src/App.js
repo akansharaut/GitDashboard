@@ -94,7 +94,26 @@ class App extends Component {
 
     fullDateTime = (dateValue) => {
         let d = new Date(dateValue);
-        return d.toLocaleString([], {hour12: true});
+        let dd = new Date(Date.now());
+        console.log("date",d.getDate());
+        console.log("date now",dd.getDate());
+        if(d.getDate() === dd.getDate()){
+            return 'today';
+        }else if(dd.getDate() - d.getDate() < 28){
+            return dd.getDate() - d.getDate() + ' days ago';
+        } else {
+            return d.toLocaleString([], {hour12: true})
+        }
+        /*if(d.getDate() === dd.getDate()){
+            return 'today';
+        }else if(d.getDate() === dd.getDate()-1){
+            return 'a day ago';
+        }else if(d.getDate() === dd.getDate()-2){
+            return 'two day ago';
+        }else {
+            return d.toLocaleString([], {hour12: true})
+        }*/
+        //return d.getDate() === dd.getDate()? 'today': d.toLocaleString([], {hour12: true});
     };
 
     filterBasedOnMember = (event) => {
@@ -170,8 +189,7 @@ class App extends Component {
                                                         {pr.title}
                                                     </span>
                                                         <div className='pr-author'>
-                                                            created
-                                                            by <span>{pr.createdby}</span> on <span>{this.fullDateTime(pr.createdDate)}</span>
+                                                            opened {this.fullDateTime(pr.createdDate)} by <span>{pr.createdby}</span>
                                                         </div>
                                                     </a>
                                                 );
